@@ -37,6 +37,34 @@ from toutiao_protocol import PublisherError, ToutiaoProtocolClient
 LOG = logging.getLogger("toutiao-publisher")
 
 
+EDITORIAL_META_MARKERS = (
+    "写作思路",
+    "创作思路",
+    "选题思路",
+    "内容思路",
+    "成文思路",
+    "写作角度",
+    "爆点分析",
+    "爆点通常",
+    "内容的爆点",
+    "为什么值得写",
+    "可写方向",
+    "创作方向",
+    "写作建议",
+    "创作建议",
+    "选题建议",
+    "素材建议",
+    "文章结构建议",
+    "内容结构建议",
+)
+
+
+def find_editorial_meta(body_markdown: str) -> list[str]:
+    """Return editorial-planning phrases that must stay out of publishable copy."""
+    compact = re.sub(r"\s+", "", str(body_markdown or ""))
+    return [marker for marker in EDITORIAL_META_MARKERS if marker in compact]
+
+
 def utc_stamp() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
@@ -294,19 +322,20 @@ class ArticleGenerator:
 
     def generate(self, topic: str, guidance: str = "") -> Article:
         prompt = self._prompt(topic, guidance)
+        system_message = (
+            "你是中文头条号资深编辑。输出原创、事实谨慎、结构清晰的文章。"
+            "不要虚构数据、采访、政策或来源；不确定的事实用审慎表述。"
+            "你只交付面向读者的最终成稿。写作计划、分析过程、爆点拆解、"
+            "选题依据、内容结构和创作建议都属于内部工作，不得写进标题、摘要或正文。"
+        )
+        messages: list[dict[str, str]] = [
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": prompt},
+        ]
         kwargs: dict[str, Any] = {
             "model": self.model,
             "temperature": self.temperature,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": (
-                        "你是中文头条号资深编辑。输出原创、事实谨慎、结构清晰的文章。"
-                        "不要虚构数据、采访、政策或来源；不确定的事实用审慎表述。"
-                    ),
-                },
-                {"role": "user", "content": prompt},
-            ],
+            "messages": messages,
         }
         if self.json_mode:
             kwargs["response_format"] = {"type": "json_object"}
@@ -319,17 +348,52 @@ class ArticleGenerator:
                 call_kwargs.pop("response_format", None)
             return self.client.chat.completions.create(**call_kwargs)
 
-        try:
-            response = _call_with_retries(lambda: _create(True), what=f"article:{topic[:40]}")
-        except Exception as exc:
-            if self.json_mode and "response_format" in str(exc):
-                LOG.warning("Provider rejected JSON mode; retrying without response_format")
-                kwargs.pop("response_format", None)
-                response = _call_with_retries(lambda: _create(False), what=f"article-nojson:{topic[:40]}")
-            else:
-                raise
-        text = response.choices[0].message.content or ""
-        return Article.from_payload(topic, extract_json(text))
+        for content_attempt in range(2):
+            kwargs["messages"] = messages
+            try:
+                response = _call_with_retries(
+                    lambda: _create(True), what=f"article:{topic[:40]}"
+                )
+            except Exception as exc:
+                if self.json_mode and "response_format" in str(exc):
+                    LOG.warning("Provider rejected JSON mode; retrying without response_format")
+                    kwargs.pop("response_format", None)
+                    response = _call_with_retries(
+                        lambda: _create(False), what=f"article-nojson:{topic[:40]}"
+                    )
+                else:
+                    raise
+
+            text = response.choices[0].message.content or ""
+            article = Article.from_payload(topic, extract_json(text))
+            meta_markers = find_editorial_meta(article.body_markdown)
+            if not meta_markers:
+                return article
+            if content_attempt == 0:
+                LOG.warning(
+                    "Generated body contains editorial meta content (%s); rewriting once",
+                    ", ".join(meta_markers),
+                )
+                messages = [
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": prompt},
+                    {"role": "assistant", "content": text},
+                    {
+                        "role": "user",
+                        "content": (
+                            "上一版把编辑策划内容写进了正文。请重新输出完整 JSON 成稿，"
+                            f"删除这些元内容：{'、'.join(meta_markers)}。"
+                            "正文只保留直接面向读者的事实、叙事、分析、结论和可执行信息；"
+                            "不要解释为什么这样写，也不要展示构思、提纲或创作方法。"
+                        ),
+                    },
+                ]
+                continue
+            raise PublisherError(
+                "Generated body still contains editorial planning content: "
+                + ", ".join(meta_markers)
+            )
+        raise PublisherError("Article generation did not produce publishable copy")
 
     def _prompt(self, topic: str, guidance: str = "") -> str:
         keywords = "、".join(str(x) for x in self.content.get("keywords", []))
@@ -352,13 +416,18 @@ class ArticleGenerator:
 结尾要求：{self.content.get('call_to_action', '')}
 写作角度（请严格按此角度组织，不要套用固定模板）：{guidance_line}
 
+“写作角度”仅供内部构思。先完成事实梳理、判断和结构设计，再只交付思考后的成稿；
+不得在正文中复述或解释写作角度，不得展示写作思路、选题思路、爆点分析、内容提纲、
+素材建议、创作建议或“为什么值得写”等编辑过程。
+
 写作要求：
 1. 标题 5-30 个字符，具体、准确，不使用震惊体和虚假承诺。
 2. 开头直接呈现读者问题或核心结论，并贴合上述写作角度。
 3. 正文包含 3-6 个二级标题，用“## 标题”表示；二级标题要服务该角度，避免千篇一律的“背景/影响/建议”三板斧除非角度需要。
 4. 给出可执行步骤、适用条件和常见误区。
 5. 内容原创，避免复述已有文章，不编造数据和案例。
-6. 只输出下列 JSON，不添加说明或代码围栏：
+6. `body_markdown` 必须是读者可直接阅读和发布的完整文章，不是策划案、提纲或创作教程。
+7. 只输出下列 JSON，不添加说明、分析过程或代码围栏：
 {{
   "title": "文章标题",
   "summary": "80 字以内摘要",
