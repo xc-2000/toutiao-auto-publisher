@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Local configuration and credentials
+config.toml
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Runtime state: accounts, cookies, keys, databases and browser profiles
+state/*
+!state/.gitkeep
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+
+# Generated content and protocol traces
+artifacts/
+covers/
+drafts/
+reports/
+videos/
+audio/
+tmp/
+temp/
+work/
+*.log
+
+# Local font files. Install system fonts or place your own files here.
+assets/fonts/*.ttf
+assets/fonts/*.ttc
+assets/fonts/*.otf
+
+# Editor, OS and local backups
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.bak
+*.bak-*
+*.swp

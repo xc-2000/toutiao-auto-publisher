@@ -1,0 +1,18 @@
+{
+  "name": "toutiao-auto-publisher",
+  "version": "0.1.0",
+  "description": "AI-assisted Toutiao content generation, creator activity discovery and protocol publishing dashboard.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "check": "node --check web/app.js && node --check acrawler_signer.mjs",
+    "test": "npm run check"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "jsdom": "^26.1.0"
+  }
+}

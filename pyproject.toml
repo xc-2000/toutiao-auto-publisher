@@ -1,0 +1,11 @@
+[project]
+name = "toutiao-auto-publisher"
+version = "0.1.0"
+description = "AI content generation and protocol publishing dashboard for Toutiao creators"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1220" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <title>头条内容台 · Content Desk</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <section class="auth-shell" id="auth-shell">
+      <div class="auth-layout">
+        <aside class="auth-hero">
+          <div class="auth-hero-badge">Content Desk</div>
+          <h1>用一套工作台<br />完成选题、生成与发布</h1>
+          <p>全网热榜、AI 图文/视频生成、创作任务领取与自动生产，统一在一个控制台完成。</p>
+          <ul class="auth-hero-points">
+            <li><strong>实时热榜</strong><span>多平台热点聚合与一键选题</span></li>
+            <li><strong>智能生产</strong><span>文章、封面与视频统一编排</span></li>
+            <li><strong>自动运行</strong><span>按账号计划无人值守产出</span></li>
+          </ul>
+        </aside>
+        <div class="auth-panel">
+        <div class="auth-brand"><span class="brand-mark">TT</span><span><strong>头条内容台</strong><small>Content Desk</small></span></div>
+        <div class="auth-heading"><p class="section-label">账号访问</p><h1 id="auth-title">登录</h1></div>
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab active" type="button" data-auth-mode="login">登录</button>
+          <button class="auth-tab" type="button" data-auth-mode="register">注册</button>
+        </div>
+        <form class="auth-form" id="login-form">
+          <label><span>用户名</span><input id="login-username" name="username" autocomplete="username" required /></label>
+          <label><span>密码</span><input id="login-password" name="password" type="password" autocomplete="current-password" required /></label>
+          <button class="button primary" type="submit"><i data-lucide="log-in"></i><span>登录</span></button>
+        </form>
+        <form class="auth-form" id="register-form" hidden>
+          <label><span>显示名称</span><input id="register-display-name" name="display_name" maxlength="40" autocomplete="name" required /></label>
+          <label><span>用户名</span><input id="register-username" name="username" minlength="3" maxlength="32" autocomplete="username" required /></label>
+          <label><span>密码</span><input id="register-password" name="password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required /></label>
+          <label><span>确认密码</span><input id="register-confirm-password" name="confirm_password" type="password" minlength="8" maxlength="128" autocomplete="new-password" required /></label>
+          <button class="button primary" type="submit"><i data-lucide="user-plus"></i><span>注册并进入</span></button>
+        </form>
+            <p class="auth-error" id="auth-error" role="alert"></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="app-shell" id="app-shell" hidden>
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">TT</div>
+          <div>
+            <strong>头条内容台</strong>
+            <span>Content Desk</span>
+          </div>
+        </div>
+
+        <nav class="side-nav" aria-label="主导航">
+          <button class="nav-item active" data-view="dashboard">
+            <i data-lucide="layout-dashboard"></i><span>工作台</span>
+          </button>
+          <button class="nav-item" data-view="challenges">
+            <i data-lucide="trophy"></i><span>创作任务</span>
+          </button>
+          <button class="nav-item" data-view="drafts">
+            <i data-lucide="files"></i><span>内容库</span>
+          </button>
+          <button class="nav-item" data-view="tasks">
+            <i data-lucide="list-checks"></i><span>任务进度</span>
+          </button>
+          <button class="nav-item" data-view="automation">
+            <i data-lucide="timer-reset"></i><span>自动化</span>
+          </button>
+          <button class="nav-item admin-nav" data-view="users" hidden>
+            <i data-lucide="shield-check"></i><span>用户管理</span>
+          </button>
+          <button class="nav-item" data-view="settings">
+            <i data-lucide="settings-2"></i><span>设置</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-status">
+          <div class="source-line">
+            <span class="status-dot" id="source-dot"></span>
+            <div><strong>全网热榜</strong><span id="source-status">连接中</span></div>
+          </div>
+          <button class="button secondary full-width" id="session-button" hidden>
+            <i data-lucide="key-square"></i><span>协议会话</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <div class="topbar-copy">
+            <p class="eyebrow" id="today-label"></p>
+            <h1 id="view-title">内容工作台</h1>
+          </div>
+          <div class="topbar-actions">
+            <span class="connection-badge" id="api-key-badge" hidden>
+              <i data-lucide="key-round"></i><span>API 检查中</span>
+            </span>
+            <span class="app-user-chip"><i data-lucide="user-round"></i><span><strong id="app-user-name">--</strong><small id="app-user-role">普通用户</small></span></span>
+            <button class="icon-button" id="logout-button" title="退出登录" aria-label="退出登录">
+              <i data-lucide="log-out"></i>
+            </button>
+            <button class="icon-button" id="refresh-all" title="刷新数据" aria-label="刷新数据">
+              <i data-lucide="refresh-cw"></i>
+            </button>
+          </div>
+        </header>
+
+        <section class="view active" id="view-dashboard">
+          <div class="page-hero">
+            <div class="page-hero-copy">
+              <p class="section-label">今日生产</p>
+              <h2>从热点到成稿，一步完成</h2>
+            </div>
+            <div class="metrics-band">
+              <div class="metric"><span>全网热点</span><strong id="metric-hot">0</strong><small>条</small></div>
+              <div class="metric"><span>生成中</span><strong id="metric-running">0</strong><small>项</small></div>
+              <div class="metric"><span>待发布</span><strong id="metric-ready">0</strong><small>项</small></div>
+              <div class="metric"><span>已完成</span><strong id="metric-completed">0</strong><small>项</small></div>
+            </div>
+          </div>
+
+          <div class="workspace-grid dashboard-layout">
+            <section class="panel compose-panel primary-panel">
+              <header class="panel-header">
+                <div><p class="section-label">编辑决策</p><h2>生成任务</h2></div>
+                <span class="selection-index" id="selected-rank">未选择</span>
+              </header>
+              <form id="generate-form" class="compose-form">
+                <fieldset class="mode-control content-type-control choice-group">
+                  <legend>内容类型</legend>
+                  <div class="choice-tabs" role="radiogroup" aria-label="内容类型">
+                    <label class="choice-tab">
+                      <input type="radio" name="content-type" value="article" checked />
+                      <span class="choice-tab-face">
+                        <i data-lucide="file-text"></i>
+                        <em>图文</em>
+                        <small>文章 + 封面</small>
+                      </span>
+                    </label>
+                    <label class="choice-tab">
+                      <input type="radio" name="content-type" value="video" />
+                      <span class="choice-tab-face">
+                        <i data-lucide="clapperboard"></i>
+                        <em>视频</em>
+                        <small>短视频成片</small>
+                      </span>
+                    </label>
+                  </div>
+                </fieldset>
+
+                <label>
+                  <span>热点选题</span>
+                  <textarea id="topic-input" rows="3" maxlength="120" placeholder="输入选题或从右侧热榜选择"></textarea>
+                </label>
+                <label>
+                  <span>写作角度</span>
+                  <textarea id="guidance-input" rows="4" maxlength="500" placeholder="选择热点后自动生成；也可手动改写角度"></textarea>
+                </label>
+
+                <div class="form-row compose-options-row">
+                  <label class="compact-field">
+                    <span>目标字数</span>
+                    <input id="word-count" type="number" min="500" max="3000" step="100" value="1200" />
+                  </label>
+                  <fieldset class="mode-control action-group">
+                    <legend>生成后</legend>
+                    <div class="action-pills" role="radiogroup" aria-label="生成后动作">
+                      <label class="action-pill">
+                        <input type="radio" name="auto-action" value="" />
+                        <span><i data-lucide="eye"></i><em>待审</em></span>
+                      </label>
+                      <label class="action-pill">
+                        <input type="radio" name="auto-action" value="draft" checked />
+                        <span><i data-lucide="file-up"></i><em>上传草稿</em></span>
+                      </label>
+                      <label class="action-pill">
+                        <input type="radio" name="auto-action" value="publish" />
+                        <span><i data-lucide="send"></i><em>直接发布</em></span>
+                      </label>
+                    </div>
+                  </fieldset>
+                </div>
+
+                <div class="form-row video-options" id="video-options" hidden>
+                  <label class="compact-field"><span>视频时长</span><input id="video-duration" type="number" min="2" max="60" step="1" value="15" title="发布总时长可自定义；单段最长15秒，系统自动计算段数并融合" /><small id="video-duration-hint" class="field-hint">单段≤15秒，系统自动计算段数</small></label>
+                  <label><span>画幅</span><select id="video-aspect-ratio"><option value="16:9">横版 16:9</option><option value="9:16">竖版 9:16</option><option value="1:1">方形 1:1</option></select></label>
+                </div>
+
+                <button class="button primary generate-button compose-submit" type="submit">
+                  <span class="compose-submit-icon"><i data-lucide="sparkles"></i></span>
+                  <span class="compose-submit-copy">
+                    <strong class="compose-submit-title">生成文章与封面</strong>
+                    <small class="compose-submit-desc">按当前策略创建生产任务</small>
+                  </span>
+                </button>
+              </form>
+            </section>
+
+            <section class="panel hot-panel signal-panel">
+              <header class="panel-header">
+                <div><p class="section-label">实时信号</p><h2>全网实时热榜</h2></div>
+                <button class="icon-button subtle" id="refresh-hot" title="刷新热榜" aria-label="刷新热榜">
+                  <i data-lucide="rotate-cw"></i>
+                </button>
+              </header>
+              <div class="hot-toolbar">
+                <select id="hot-category" aria-label="热点分类"><option value="">全部分类</option></select>
+                <select id="hot-source" aria-label="热点平台"><option value="">全部平台</option></select>
+                <label class="hot-search"><i data-lucide="search"></i><input id="hot-query" type="search" placeholder="搜索热点" /></label>
+              </div>
+              <div class="hot-list" id="hot-list" aria-live="polite"></div>
+            </section>
+          </div>
+
+        </section>
+
+        <section class="view" id="view-challenges">
+          <header class="page-section-header list-page-header">
+            <div><p class="section-label">Creator Activities</p><h2>头条创作任务</h2></div>
+            <div class="challenge-header-actions">
+              <span class="result-count" id="challenge-result-count">等待加载</span>
+              <button class="button primary" id="accept-all-challenges" type="button"><i data-lucide="list-checks"></i><span>一键领取全部</span></button>
+            </div>
+          </header>
+          <section class="data-surface list-surface">
+            <div class="data-toolbar challenge-toolbar sticky-toolbar">
+              <select id="challenge-account" aria-label="任务账号"><option value="">暂无账号</option></select>
+              <select id="challenge-type" aria-label="任务体裁"><option value="1">图文任务</option><option value="2">视频任务</option></select>
+              <select id="challenge-part-status" aria-label="参与状态"><option value="0">全部状态</option><option value="1">已参与</option><option value="2">未参与</option></select>
+              <select id="challenge-category" aria-label="任务领域"><option value="全部">全部领域</option></select>
+              <label class="table-search"><i data-lucide="search"></i><input id="challenge-query" type="search" placeholder="查询活动标题" /></label>
+              <button class="icon-button" id="refresh-challenges" type="button" title="刷新创作任务" aria-label="刷新创作任务"><i data-lucide="refresh-cw"></i></button>
+            </div>
+            <div class="table-wrap management-table-wrap">
+              <table class="management-table challenge-table">
+                <thead><tr><th>创作活动</th><th>体裁</th><th>活动激励</th><th>活动时间</th><th>参与状态</th><th class="actions-column">操作</th></tr></thead>
+                <tbody id="challenge-body"><tr><td class="empty-row" colspan="6">选择账号后加载创作任务</td></tr></tbody>
+              </table>
+            </div>
+            <footer class="pagination-bar">
+              <div class="challenge-page-summary">
+                <span id="challenge-page-summary">暂无活动</span>
+                <label class="page-size-control"><span>每页</span><select id="challenge-page-size" aria-label="创作任务每页条数"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select></label>
+              </div>
+              <div class="pagination-actions">
+                <button class="icon-button" id="challenge-prev" type="button" title="上一页" aria-label="上一页"><i data-lucide="chevron-left"></i></button>
+                <span id="challenge-page-index">第 1 / 1 页</span>
+                <button class="icon-button" id="challenge-next" type="button" title="下一页" aria-label="下一页"><i data-lucide="chevron-right"></i></button>
+              </div>
+            </footer>
+          </section>
+        </section>
+
+        <section class="view" id="view-drafts">
+          <header class="page-section-header list-page-header">
+            <div><p class="section-label">内容资产</p><h2>内容库</h2></div>
+            <span class="result-count" id="content-result-count">0 条内容</span>
+          </header>
+          <section class="data-surface list-surface">
+            <div class="data-toolbar sticky-toolbar">
+              <label class="table-search"><i data-lucide="search"></i><input id="content-query" type="search" placeholder="查询标题、选题、摘要或账号" /></label>
+              <select id="content-status" aria-label="内容状态">
+                <option value="all">全部状态</option>
+                <option value="ready">待发布</option>
+                <option value="completed">已完成</option>
+                <option value="error">异常</option>
+              </select>
+              <select id="content-account" aria-label="内容账号"><option value="all">全部账号</option></select>
+              <label class="page-size-control"><span>每页</span><select id="content-page-size" aria-label="内容库每页条数"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select></label>
+            </div>
+            <div class="table-wrap management-table-wrap">
+              <table class="management-table content-table">
+                <thead><tr><th>内容</th><th>账号</th><th>状态</th><th>更新时间</th><th class="actions-column">操作</th></tr></thead>
+                <tbody id="content-body"></tbody>
+              </table>
+            </div>
+            <footer class="pagination-bar">
+              <span id="content-page-summary">暂无内容</span>
+              <div class="pagination-actions">
+                <button class="icon-button" id="content-prev" type="button" title="上一页" aria-label="上一页"><i data-lucide="chevron-left"></i></button>
+                <span id="content-page-index">第 1 / 1 页</span>
+                <button class="icon-button" id="content-next" type="button" title="下一页" aria-label="下一页"><i data-lucide="chevron-right"></i></button>
+              </div>
+            </footer>
+          </section>
+        </section>
+
+        <section class="view" id="view-tasks">
+          <header class="page-section-header list-page-header">
+            <div><p class="section-label">生产流水线</p><h2>任务进度</h2></div>
+            <span class="result-count" id="task-result-count">0 个任务</span>
+          </header>
+          <section class="data-surface list-surface">
+            <div class="data-toolbar task-toolbar sticky-toolbar">
+              <label class="table-search"><i data-lucide="search"></i><input id="task-query" type="search" placeholder="查询任务、分类或账号" /></label>
+              <select id="task-status" aria-label="任务状态">
+                <option value="all">全部状态</option>
+                <option value="running">进行中</option>
+                <option value="ready">待发布</option>
+                <option value="completed">已完成</option>
+                <option value="error">异常</option>
+              </select>
+              <select id="task-account" aria-label="任务账号"><option value="all">全部账号</option></select>
+              <label class="page-size-control"><span>每页</span><select id="task-page-size" aria-label="任务每页条数"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select></label>
+            </div>
+            <div class="table-wrap management-table-wrap">
+              <table class="management-table task-table">
+                <thead><tr><th>任务</th><th>账号</th><th>执行进度</th><th>创建时间</th><th>更新时间</th><th class="actions-column">操作</th></tr></thead>
+                <tbody id="task-body"></tbody>
+              </table>
+            </div>
+            <footer class="pagination-bar">
+              <span id="task-page-summary">暂无任务</span>
+              <div class="pagination-actions">
+                <button class="icon-button" id="task-prev" type="button" title="上一页" aria-label="上一页"><i data-lucide="chevron-left"></i></button>
+                <span id="task-page-index">第 1 / 1 页</span>
+                <button class="icon-button" id="task-next" type="button" title="下一页" aria-label="下一页"><i data-lucide="chevron-right"></i></button>
+              </div>
+            </footer>
+          </section>
+        </section>
+
+        <section class="view" id="view-automation">
+          <header class="page-section-header list-page-header automation-page-header">
+            <div>
+              <p class="section-label">无人值守</p>
+              <h2>热点自动生产</h2>
+            </div>
+            <div class="automation-header-actions">
+              <span class="automation-state" id="automation-state">已停止</span>
+              <button class="button primary save-automation" form="automation-form" type="submit">
+                <i data-lucide="save"></i><span>保存设置</span>
+              </button>
+            </div>
+          </header>
+
+          <form class="automation-layout automation-board" id="automation-form">
+            <div class="automation-primary auto-config-card">
+              <section class="auto-block auto-block-accounts">
+                <div class="auto-block-head auto-block-head-row">
+                  <div>
+                    <p class="section-label">多账号</p>
+                    <h3>执行账号池</h3>
+                  </div>
+                  <div class="auto-account-batch">
+                    <button class="button ghost-btn" type="button" id="automation-enable-all"><i data-lucide="play"></i><span>全部开启</span></button>
+                    <button class="button ghost-btn" type="button" id="automation-disable-all"><i data-lucide="pause"></i><span>全部停止</span></button>
+                  </div>
+                </div>
+                <div class="auto-account-list" id="automation-account-list"></div>
+                <div class="auto-account-hint" id="automation-account-hint"></div>
+              </section>
+
+              <section class="auto-block auto-block-control">
+                <div class="auto-block-head">
+                  <p class="section-label">执行控制</p>
+                  <h3>当前账号策略</h3>
+                </div>
+
+                <div class="auto-control-grid">
+                  <div class="auto-control-row">
+                    <label class="auto-field auto-field-account">
+                      <span>配置账号</span>
+                      <div class="auto-field-inline">
+                        <select id="automation-account"></select>
+                        <span class="account-run-state" id="account-run-state">待配置</span>
+                      </div>
+                    </label>
+                    <label class="auto-run-card" for="automation-enabled">
+                      <span class="auto-run-copy">
+                        <strong>自动运行</strong>
+                        <small id="next-run-label">暂无计划</small>
+                      </span>
+                      <span class="auto-run-switch">
+                        <input type="checkbox" id="automation-enabled" />
+                        <span class="switch" aria-hidden="true"></span>
+                      </span>
+                    </label>
+                  </div>
+
+                  <div class="auto-control-row">
+                    <label class="auto-field">
+                      <span>运行间隔</span>
+                      <div class="input-suffix"><input id="automation-interval" type="number" min="5" max="1440" value="60" /><span>分钟</span></div>
+                    </label>
+                    <label class="auto-field">
+                      <span>每轮选题</span>
+                      <div class="input-suffix"><input id="automation-count" type="number" min="1" max="5" value="1" /><span>篇</span></div>
+                    </label>
+                  </div>
+
+                  <fieldset class="mode-control auto-mode">
+                    <legend>内容类型</legend>
+                    <div class="segmented">
+                      <label><input type="radio" name="automation-content-type" value="article" checked /><span>图文封面</span></label>
+                      <label><input type="radio" name="automation-content-type" value="video" /><span>短视频</span></label>
+                    </div>
+                  </fieldset>
+
+                  <label class="auto-run-card auto-claim-card" for="automation-auto-claim">
+                    <span class="auto-run-copy">
+                      <strong>自动领取任务</strong>
+                      <small>扫描活动奖励并关联发布</small>
+                    </span>
+                    <span class="auto-run-switch">
+                      <input type="checkbox" id="automation-auto-claim" checked />
+                      <span class="switch" aria-hidden="true"></span>
+                    </span>
+                  </label>
+
+                  <div class="auto-control-row auto-video-options" id="automation-video-options" hidden>
+                    <label class="auto-field">
+                      <span>视频时长</span>
+                      <div class="input-suffix"><input id="automation-video-duration" type="number" min="2" max="60" value="15" title="发布总时长可自定义；单段最长15秒，系统自动计算段数并融合" /><span>秒</span></div><small id="automation-video-duration-hint" class="field-hint">单段≤15秒，系统自动计算段数</small>
+                    </label>
+                    <div class="auto-field auto-field-note">
+                      <span>说明</span>
+                      <p class="auto-inline-note">短视频任务会走视频生成链路；图文任务生成文章 + 封面图。</p>
+                    </div>
+                  </div>
+
+                  <fieldset class="mode-control auto-mode">
+                    <legend>处理方式</legend>
+                    <div class="segmented">
+                      <label><input type="radio" name="automation-mode" value="draft" checked /><span>存入草稿</span></label>
+                      <label><input type="radio" name="automation-mode" value="publish" /><span>直接发布</span></label>
+                    </div>
+                  </fieldset>
+                </div>
+              </section>
+
+              <section class="auto-block auto-block-scope">
+                <div class="auto-block-head">
+                  <p class="section-label">选题范围</p>
+                  <h3>分类与平台</h3>
+                </div>
+                <div class="automation-scope-grid">
+                  <fieldset class="scope-fieldset">
+                    <legend>热点分类</legend>
+                    <div class="scope-options" id="automation-categories"></div>
+                  </fieldset>
+                  <fieldset class="scope-fieldset">
+                    <legend>数据平台</legend>
+                    <div class="scope-options" id="automation-sources"></div>
+                  </fieldset>
+                </div>
+              </section>
+            </div>
+
+            <aside class="automation-log status-rail">
+              <div class="status-rail-head">
+                <p class="section-label">Runtime</p>
+                <h3>运行状态</h3>
+              </div>
+              <dl>
+                <div><dt>上次运行</dt><dd id="last-run-value">--</dd></div>
+                <div><dt>下次运行</dt><dd id="next-run-value">--</dd></div>
+                <div><dt>队列任务</dt><dd id="job-total-value">0</dd></div>
+                <div><dt>活动任务池</dt><dd id="automation-opportunity-value">未扫描</dd></div>
+                <div><dt>本轮领取</dt><dd id="automation-claimed-value">0</dd></div>
+                <div><dt>最高奖励</dt><dd id="automation-reward-value">--</dd></div>
+                <div><dt>内容类型</dt><dd id="automation-content-type-value">图文</dd></div>
+                <div><dt>发布模式</dt><dd id="automation-mode-value">草稿</dd></div>
+                <div><dt>分类范围</dt><dd id="automation-category-value">全部</dd></div>
+                <div><dt>平台范围</dt><dd id="automation-source-value">全部</dd></div>
+              </dl>
+              <div class="status-rail-tip">
+                每个账号独立保存策略，可同时开启多个账号。保存仅写入当前选中账号；列表开关可快速启停。
+              </div>
+            </aside>
+          </form>
+        </section>
+
+        <section class="view" id="view-users">
+          <header class="page-section-header list-page-header">
+            <div><p class="section-label">访问控制</p><h2>用户管理</h2></div>
+            <button class="button primary" id="add-app-user" type="button"><i data-lucide="user-plus"></i><span>创建用户</span></button>
+          </header>
+          <section class="data-surface list-surface">
+            <div class="data-toolbar user-toolbar sticky-toolbar">
+              <label class="table-search"><i data-lucide="search"></i><input id="user-query" type="search" placeholder="查询用户名或显示名称" /></label>
+              <select id="user-role-filter" aria-label="用户角色"><option value="all">全部角色</option><option value="admin">管理员</option><option value="user">普通用户</option></select>
+              <select id="user-status-filter" aria-label="用户状态"><option value="all">全部状态</option><option value="enabled">已启用</option><option value="disabled">已停用</option></select>
+              <label class="page-size-control"><span>每页</span><select id="user-page-size" aria-label="用户管理每页条数"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select></label>
+            </div>
+            <div class="table-wrap management-table-wrap">
+              <table class="management-table user-table">
+                <thead><tr><th>用户</th><th>角色</th><th>状态</th><th>创建时间</th><th>最近登录</th><th class="actions-column">操作</th></tr></thead>
+                <tbody id="user-body"></tbody>
+              </table>
+            </div>
+            <footer class="pagination-bar user-table-footer">
+              <span id="user-page-summary">暂无用户</span>
+              <div class="pagination-actions">
+                <button class="icon-button" id="user-prev" type="button" title="上一页" aria-label="上一页"><i data-lucide="chevron-left"></i></button>
+                <span id="user-page-index">第 1 / 1 页</span>
+                <button class="icon-button" id="user-next" type="button" title="下一页" aria-label="下一页"><i data-lucide="chevron-right"></i></button>
+              </div>
+            </footer>
+          </section>
+        </section>
+
+        <section class="view" id="view-settings">
+          <header class="page-section-header list-page-header">
+            <div><p class="section-label">运行环境</p><h2>模型与协议</h2></div>
+          </header>
+          <div class="settings-overview">
+          <div class="settings-list">
+            <div class="setting-row"><div><i data-lucide="video"></i><span><strong>视频模型</strong><small>异步生成、轮询与下载</small></span></div><code id="video-model">--</code></div>
+            <div class="setting-row"><div><i data-lucide="brain-circuit"></i><span><strong>文章模型</strong><small>结构化中文内容生成</small></span></div><code id="article-model">--</code></div>
+            <div class="setting-row"><div><i data-lucide="image"></i><span><strong>封面模型</strong><small>主视觉与标题合成</small></span></div><code id="cover-model">--</code></div>
+            <div class="setting-row"><div><i data-lucide="key-round"></i><span><strong>API Key</strong><small id="api-key-name">OPENAI_API_KEY</small></span></div><span class="setting-value" id="api-key-state">检查中</span></div>
+            <div class="setting-row"><div><i data-lucide="users-round"></i><span><strong>当前头条账号</strong><small id="session-message">尚未登录</small></span></div><span class="setting-value" id="account-state-badge">检查中</span></div>
+          </div>
+          </div>
+          <div class="settings-grid">
+          <section class="settings-band">
+            <header class="settings-band-header"><div><p class="section-label">账号池</p><h3>头条号账号</h3></div><button class="button secondary" id="add-account"><i data-lucide="user-plus"></i><span>添加账号</span></button></header>
+            <div class="resource-list" id="account-list"></div>
+          </section>
+          <section class="settings-band">
+            <header class="settings-band-header"><div><p class="section-label">AI Provider</p><h3>模型配置</h3></div><button class="button secondary" id="add-model"><i data-lucide="plus"></i><span>添加模型</span></button></header>
+            <div class="resource-list" id="model-list"></div>
+          </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="user-dialog" class="session-dialog user-dialog">
+      <div class="dialog-toolbar">
+        <div><p class="section-label">访问控制</p><h2 id="user-dialog-title">创建用户</h2></div>
+        <button class="icon-button" id="close-user-dialog" type="button" title="关闭" aria-label="关闭"><i data-lucide="x"></i></button>
+      </div>
+      <form id="user-form">
+        <div class="model-fields user-fields">
+          <label><span>显示名称</span><input id="user-display-name" maxlength="40" required /></label>
+          <label><span>用户名</span><input id="user-username" minlength="3" maxlength="32" required /></label>
+          <label><span>密码</span><input id="user-password" type="password" minlength="8" maxlength="128" autocomplete="new-password" /></label>
+          <label><span>角色</span><select id="user-role"><option value="user">普通用户</option><option value="admin">管理员</option></select></label>
+          <label><span>账号状态</span><select id="user-enabled"><option value="true">已启用</option><option value="false">已停用</option></select></label>
+        </div>
+        <div class="dialog-actions session-actions user-dialog-actions">
+          <button class="button danger-text" id="delete-app-user" type="button"><i data-lucide="trash-2"></i><span>删除用户</span></button>
+          <div>
+            <button class="button secondary" id="cancel-user-dialog" type="button">取消</button>
+            <button class="button primary" type="submit"><i data-lucide="save"></i><span>保存用户</span></button>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="editor-dialog" class="editor-dialog">
+      <div class="dialog-toolbar">
+        <div><p class="section-label">内容编辑</p><h2 id="dialog-heading">内容</h2></div>
+        <button class="icon-button" id="close-dialog" title="关闭" aria-label="关闭"><i data-lucide="x"></i></button>
+      </div>
+      <div class="editor-layout">
+        <div class="cover-preview"><img id="dialog-cover" alt="文章封面" /><video id="dialog-video" controls preload="metadata"></video><span id="cover-placeholder">内容预览</span></div>
+        <div class="editor-fields">
+          <label><span>标题</span><input id="edit-title" maxlength="30" /></label>
+          <label><span>摘要</span><textarea id="edit-summary" rows="3"></textarea></label>
+          <label class="body-field"><span>正文</span><textarea id="edit-body"></textarea></label>
+          <label><span>标签</span><input id="edit-tags" placeholder="用逗号分隔" /></label>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button class="button danger-text" id="delete-job"><i data-lucide="trash-2"></i><span>删除</span></button>
+        <div class="dialog-action-group">
+          <button class="button secondary" id="regen-article" type="button"><i data-lucide="refresh-cw"></i><span>重写文案</span></button>
+          <button class="button secondary" id="regen-media" type="button"><i data-lucide="image"></i><span id="regen-media-label">重做封面</span></button>
+          <button class="button secondary" id="regen-all" type="button"><i data-lucide="rotate-ccw"></i><span>全部重生成</span></button>
+          <button class="button secondary" id="save-draft"><i data-lucide="save"></i><span>保存修改</span></button>
+          <button class="button secondary" id="upload-draft"><i data-lucide="file-up"></i><span>上传草稿</span></button>
+          <button class="button primary" id="publish-now"><i data-lucide="send"></i><span>立即发布</span></button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="challenge-dialog" class="session-dialog challenge-dialog">
+      <div class="dialog-toolbar">
+        <div><p class="section-label">创作任务详情</p><h2 id="challenge-dialog-title">活动详情</h2></div>
+        <button class="icon-button" id="close-challenge-dialog" type="button" title="关闭" aria-label="关闭"><i data-lucide="x"></i></button>
+      </div>
+      <div class="challenge-detail-body">
+        <img id="challenge-banner" class="challenge-banner" alt="创作活动主图" hidden />
+        <div class="challenge-detail-meta" id="challenge-detail-meta"></div>
+        <div class="challenge-detail-blocks" id="challenge-detail-blocks"></div>
+      </div>
+      <form id="challenge-generate-form" class="challenge-generate-form">
+        <label><span>生成体裁</span><select id="challenge-generate-type"></select></label>
+        <label id="challenge-word-count-field"><span>目标字数</span><input id="challenge-word-count" type="number" min="500" max="3000" step="100" value="1200" /></label>
+        <label><span>生成后</span><select id="challenge-auto-action"><option value="">待审</option><option value="draft">上传草稿</option><option value="publish">直接发布</option></select></label>
+        <label class="challenge-video-field" hidden><span>视频时长</span><input id="challenge-video-duration" type="number" min="2" max="60" value="15" title="发布总时长可自定义；单段最长15秒，系统自动计算段数并融合" /><small id="challenge-video-duration-hint" class="field-hint">单段≤15秒，系统自动计算段数</small></label>
+        <label class="challenge-video-field" hidden><span>画幅</span><select id="challenge-video-ratio"><option value="16:9">横版 16:9</option><option value="9:16">竖版 9:16</option><option value="1:1">方形 1:1</option></select></label>
+        <button class="button secondary" id="challenge-accept-detail" type="button"><i data-lucide="circle-plus"></i><span>在线领取</span></button>
+        <button class="button primary" type="submit"><i data-lucide="wand-sparkles"></i><span id="challenge-generate-label">领取并生成</span></button>
+      </form>
+    </dialog>
+
+    <dialog id="account-dialog" class="session-dialog account-dialog">
+      <div class="dialog-toolbar">
+        <div><p class="section-label">多账号</p><h2>添加头条号</h2></div>
+        <button class="icon-button" id="close-account" type="button" title="关闭" aria-label="关闭"><i data-lucide="x"></i></button>
+      </div>
+      <div class="login-tabs" role="tablist">
+        <button class="login-tab active" type="button" data-login-mode="qr"><i data-lucide="scan-line"></i><span>扫码登录</span></button>
+        <button class="login-tab" type="button" data-login-mode="cookie"><i data-lucide="braces"></i><span>Cookie 导入</span></button>
+      </div>
+      <section class="qr-login-panel" id="qr-login-panel">
+        <div class="qr-frame"><img id="login-qrcode" alt="头条号登录二维码" /><span id="qr-placeholder"><i data-lucide="loader-circle"></i></span></div>
+        <div class="qr-status"><strong id="qr-status-title">正在获取二维码</strong><span id="qr-status-detail">等待扫码</span></div>
+        <button class="button secondary" id="refresh-qr" type="button"><i data-lucide="refresh-cw"></i><span>刷新二维码</span></button>
+      </section>
+      <form id="session-form" class="cookie-import-panel" hidden>
+        <div class="session-fields">
+          <label><span>Cookie</span><textarea id="session-cookie" rows="7" spellcheck="false" placeholder="name=value; name2=value2"></textarea></label>
+          <label><span>附加请求头 JSON</span><textarea id="session-headers" rows="5" spellcheck="false" placeholder='{"x-secsdk-csrf-token":"VALUE"}'></textarea></label>
+        </div>
+        <div class="dialog-actions session-actions"><button class="button primary" type="submit"><i data-lucide="download"></i><span>导入并检测</span></button></div>
+      </form>
+    </dialog>
+
+    <dialog id="model-dialog" class="session-dialog model-dialog">
+      <form id="model-form">
+        <div class="dialog-toolbar">
+          <div><p class="section-label">OpenAI Compatible</p><h2 id="model-dialog-title">添加模型</h2></div>
+          <button class="icon-button" id="close-model" type="button" title="关闭" aria-label="关闭"><i data-lucide="x"></i></button>
+        </div>
+        <div class="model-fields">
+          <label><span>配置名称</span><input id="model-name" maxlength="40" required placeholder="生产模型" /></label>
+          <label><span>用途</span><select id="model-kind"><option value="article">文章生成</option><option value="cover">封面生成</option><option value="video">视频生成</option></select></label>
+          <label class="wide-field"><span>Base URL</span><input id="model-base-url" type="url" required value="https://api.openai.com/v1" /></label>
+          <label><span>Model</span><input id="model-id" required placeholder="gpt-4.1-mini" /></label>
+          <label><span>API Key</span><input id="model-api-key" type="password" autocomplete="off" placeholder="sk-..." /></label>
+          <label class="article-model-field"><span>Temperature</span><input id="model-temperature" type="number" min="0" max="2" step="0.1" value="0.7" /></label>
+          <label class="article-model-field checkbox-field"><span>JSON Mode</span><input id="model-json-mode" type="checkbox" checked /><span class="compact-switch"></span></label>
+          <label class="cover-model-field" hidden><span>图片尺寸</span><input id="model-size" value="1536x1024" /></label>
+          <label class="cover-model-field" hidden><span>质量</span><select id="model-quality"><option value="low">low</option><option value="medium" selected>medium</option><option value="high">high</option></select></label>
+          <label class="video-model-field" hidden><span>Create Path</span><input id="model-create-path" value="/videos" /></label>
+          <label class="video-model-field" hidden><span>默认时长（秒）</span><input id="model-duration" type="number" min="2" max="15" value="15" title="模型单段最长15秒" /></label>
+          <label class="video-model-field" hidden><span>默认画幅</span><select id="model-aspect-ratio"><option value="16:9">16:9</option><option value="9:16">9:16</option><option value="1:1">1:1</option></select></label>
+          <label class="video-model-field" hidden><span>输出尺寸</span><input id="model-video-size" value="1280x720" /></label>
+          <label class="video-model-field" hidden><span>轮询间隔（秒）</span><input id="model-poll-interval" type="number" min="1" max="60" step="1" value="5" /></label>
+          <label class="video-model-field" hidden><span>超时（秒）</span><input id="model-timeout" type="number" min="30" max="7200" step="30" value="900" /></label>
+        </div>
+        <div class="dialog-actions session-actions"><button class="button primary" type="submit"><i data-lucide="save"></i><span>保存并启用</span></button></div>
+      </form>
+    </dialog>
+
+    <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+    <dialog id="media-preview-dialog" class="media-preview-dialog">
+      <div class="dialog-toolbar">
+        <div><p class="section-label">媒体预览</p><h2 id="media-preview-title">预览</h2></div>
+        <button class="icon-button" id="close-media-preview" type="button" formmethod="dialog" title="关闭" aria-label="关闭"><i data-lucide="x"></i></button>
+      </div>
+      <div class="media-preview-body">
+        <img id="media-preview-image" alt="图片预览" hidden />
+        <video id="media-preview-video" controls playsinline preload="metadata" hidden></video>
+        <div id="media-preview-empty" class="media-preview-empty">暂无预览</div>
+      </div>
+    </dialog>
+
+    <script src="/app.js"></script></body>
+</html>

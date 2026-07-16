@@ -1,0 +1,64 @@
+name: Bug 报告
+description: 提交可复现的功能或兼容性问题
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: 请先删除 Cookie、Token、API Key、账号 ID 和完整协议响应。
+  - type: input
+    id: version
+    attributes:
+      label: 版本或提交
+      placeholder: v0.1.0 / commit SHA
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: 模块
+      options:
+        - Dashboard
+        - 热点聚合
+        - 图文生成
+        - 视频生成
+        - 创作任务
+        - 图文发布协议
+        - 视频发布协议
+        - 登录与账号
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: 按顺序描述操作和输入
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果与脱敏日志
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 环境
+      placeholder: Windows 11 / Python 3.13 / Chrome 版本
+    validations:
+      required: true
+  - type: checkboxes
+    id: security
+    attributes:
+      label: 敏感信息确认
+      options:
+        - label: 我已移除 Cookie、Token、API Key、账号资料和本机路径
+          required: true

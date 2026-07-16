@@ -1,0 +1,145 @@
+﻿[ai]
+base_url = "https://api.openai.com/v1"
+api_key_env = "OPENAI_API_KEY"
+model = "gpt-4.1-mini"
+temperature = 0.7
+json_mode = true
+
+[cover]
+enabled = true
+base_url = "https://api.openai.com/v1"
+api_key_env = "OPENAI_API_KEY"
+model = "gpt-image-1"
+size = "1536x1024"
+quality = "medium"
+output_dir = "./covers"
+brand = "热点观察"
+overlay_title = true
+fallback_on_error = true
+font_path = "./assets/fonts/NotoSansSC-Bold.otf"
+
+[video]
+base_url = "https://api.openai.com/v1"
+api_key_env = "OPENAI_API_KEY"
+model = "sora-2"
+create_path = "/videos"
+poll_path = "/videos/{id}"
+content_path = "/videos/{id}/content"
+duration_field = "seconds"
+duration = 15
+aspect_ratio = "16:9"
+size = "1280x720"
+poll_interval = 5
+timeout = 900
+max_download_bytes = 524288000
+output_dir = "./videos"
+# Multi-clip stitch: when requested duration > segment_max_seconds, generate opening/body/closing clips and fuse with ffmpeg.
+segment_max_seconds = 15
+stitch_enabled = true
+stitch_crossfade = 0.35
+stitch_keep_audio = true
+max_segments = 6
+# Add Chinese TTS narration; force replace silent AI audio tracks
+audio_enabled = true
+audio_force_tts = true
+audio_silence_mean_db = -45.0
+tts_voice = "zh-CN-XiaoxiaoNeural"
+tts_rate = "+0%"
+bgm_volume = 0.12
+# keep_segments = false
+# ffmpeg = "ffmpeg"
+# Optional overseas HTTP/SOCKS proxy for downloading xAI/OpenAI CDN videos from China VMs.
+# Prefer socks5h for vidgen.x.ai; some HTTP CONNECT proxies reset that host.
+# Example: "socks5h://user__cr.us:pass@gw.example.com:824"
+# http_proxy = "socks5h://127.0.0.1:1080"
+# download_url_template = "{base_url}/videos/download?id={id}"
+# direct_connect_timeout = 8
+# direct_timeout = 90
+
+[hot_topics]
+endpoint = "https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc"
+sources = ["toutiao", "baidu", "weibo", "zhihu", "douyin", "bilibili", "csdn", "acfun", "hackernews"]
+cache_seconds = 30
+refresh_interval_seconds = 45
+background_refresh = true
+timeout_seconds = 12
+max_workers = 9
+per_source_limit = 30
+limit = 180
+
+[dashboard]
+job_workers = 3
+host = "127.0.0.1"
+port = 8765
+registration_enabled = true
+cookie_secure = false
+state_file = "./state/dashboard.json"
+accounts_file = "./state/accounts.json"
+models_file = "./state/models.json"
+secret_key_file = "./state/.secret-key"
+
+[automation]
+enabled = true
+interval_minutes = 60
+mode = "draft"
+content_type = "article"  # article=图文封面, video=短视频
+video_duration = 8
+pick_count = 1
+auto_claim_challenges = true
+categories = []
+sources = []
+
+[content]
+account_positioning = "面向普通读者的实用科技与效率内容"
+audience = "关注科技、效率工具和数字生活的中文读者"
+tone = "专业、清晰、有信息密度，避免夸张和营销腔"
+word_count = 1200
+default_topic = "普通人如何建立可靠的个人知识管理系统"
+keywords = ["效率", "知识管理", "实用方法"]
+call_to_action = "用一个具体问题邀请读者留言讨论"
+
+[toutiao]
+base_url = "https://mp.toutiao.com"
+cookie_env = "TOUTIAO_COOKIE"
+cookie_file = "./state/toutiao-cookie.txt"
+headers_json_env = "TOUTIAO_HEADERS_JSON"
+headers_file = "./state/toutiao-headers.json"
+referer = "https://mp.toutiao.com/profile_v4/graphic/publish"
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+impersonate = "chrome"
+timeout_seconds = 30
+aid = 1231
+upload_source = 20020003
+mp_publish_ab_val = "0"
+csrf_cookie = "passport_csrf_token"
+csrf_header = "x-tt-passport-csrf-token"
+protocol_log_dir = "./artifacts/protocol"
+acrawler_signer = "./acrawler_signer.mjs"
+node_binary = "node"
+chrome_protocol_enabled = true
+chrome_executable = "C:/Program Files/Google/Chrome/Application/chrome.exe"
+chrome_profile_root = "./state/chrome-protocol-profiles"
+chrome_startup_timeout_seconds = 20
+chrome_page_timeout_seconds = 45
+chrome_security_wait_seconds = 12
+chrome_request_timeout_seconds = 60
+video_request_timeout_seconds = 120
+
+[toutiao.headers]
+# 可填写协议抓包中的动态请求头；也可在界面的“协议会话”中保存。
+# x-secsdk-csrf-token = "VALUE"
+# bd-ticket-guard-client-data = "VALUE"
+
+[upload]
+# draft: 保存草稿；publish: 正式发布。
+mode = "draft"
+cover_path = ""
+tags = []
+report_dir = "./artifacts/reports"
+draft_dir = "./drafts"
+
+[batch]
+topics_file = "./topics.txt"
+delay_seconds = 120
+ledger_file = "./state/published_topics.json"
+continue_on_error = true

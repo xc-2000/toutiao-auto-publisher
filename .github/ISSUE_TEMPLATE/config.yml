@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 安全问题
+    url: https://github.com/xc-2000/toutiao-auto-publisher/security/advisories/new
+    about: 私下报告凭据泄露、认证绕过或其他安全问题
