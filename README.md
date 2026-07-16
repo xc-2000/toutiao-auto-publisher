@@ -310,6 +310,11 @@ Windows 会尝试系统中文字体。Linux 安装 Noto CJK，或将具有适当
 
 提交 Issue 或 Pull Request 前请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 和 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)。协议字段相关修改需要附脱敏结构和测试。
 
+## 交流与联系
+
+- QQ 群：`1105248585`
+- 缺陷与功能建议：[GitHub Issues](https://github.com/xc-2000/toutiao-auto-publisher/issues)
+
 ## 许可证
 
 项目使用 [MIT License](LICENSE)。第三方模型数据与依赖许可证见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
